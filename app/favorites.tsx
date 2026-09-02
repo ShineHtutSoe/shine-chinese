@@ -1,0 +1,2 @@
+import { FoundationScreen } from '../components/foundation-screen';
+export default function FavoritesScreen() { return <FoundationScreen title="အကြိုက်ဆုံးများ" subtitle="သိမ်းထားတဲ့ စကားလုံးများ" message="Favorite sync and review mode will connect to the favorites table in the next feature phase. Browse Vocabulary to explore words now." action="ဝေါဟာရကြည့်မယ်" route="/(tabs)/vocab" icon="favorites" />; }

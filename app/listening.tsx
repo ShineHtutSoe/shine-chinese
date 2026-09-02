@@ -1,0 +1,2 @@
+import { FoundationScreen } from '../components/foundation-screen';
+export default function ListeningScreen() { return <FoundationScreen title="Listening practice" subtitle="နားထောင်ပြီး နားလည်ကြမယ်" message="Listening lesson player, transcript reveal, and answer checking will connect to published Supabase content in the next feature phase." action="Practice သို့ ပြန်မယ်" route="/(tabs)/practice" icon="headphones" />; }

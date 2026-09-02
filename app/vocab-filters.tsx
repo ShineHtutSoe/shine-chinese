@@ -1,0 +1,2 @@
+import { FoundationScreen } from '../components/foundation-screen';
+export default function VocabularyFiltersScreen() { return <FoundationScreen title="Vocabulary filters" subtitle="HSK နဲ့ category အလိုက် စီမယ်" message="Category, part of speech, learned status, and favorites-only filters will be connected to the vocabulary query in the next feature phase." action="ဝေါဟာရစာရင်းသို့" route="/(tabs)/vocab" icon="default" />; }
