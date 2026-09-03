@@ -1,0 +1,40 @@
+name: Android Preview APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android-preview:
+    name: Build Shine Chinese Android preview APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+    steps:
+      - name: Check out the requested source commit
+        uses: actions/checkout@v4
+        with:
+          ref: 313aeff817c14dae910b2bccbc2fc879d69355ba
+          fetch-depth: 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Expo project and requested commit
+        run: |
+          test "$(git rev-parse HEAD)" = "313aeff817c14dae910b2bccbc2fc879d69355ba"
+          node -e "const c=require('./app.json').expo; if(c.android.package!=='com.shinechinese.app') process.exit(1); if(c.extra?.eas?.projectId!=='83cbac78-5de4-4deb-8d6f-34ee698158b4') process.exit(1); console.log('Expo project configuration verified')"
+          test -f eas.json
+
+      - name: Build Android preview APK with EAS
+        run: npx eas-cli@latest build --platform android --profile preview --non-interactive
