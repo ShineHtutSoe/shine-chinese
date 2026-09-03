@@ -31,15 +31,25 @@ function mapVocabulary(row: VocabularyRow): VocabularyItem {
 
 export async function getPublishedVocabulary(level: HskLevel): Promise<VocabularyItem[]> {
   if (!supabaseConfigured) return demoVocabulary.filter(item => item.hskLevel === level);
-  const { data, error } = await supabase.from('vocabulary').select('id, hanzi, pinyin_marked, part_of_speech, meaning_my, meaning_en, hsk_level_id, category:categories(name_my), vocabulary_examples(sentence_zh, sentence_pinyin, translation_my, sort_order)').eq('status', 'published').eq('hsk_level_id', level).order('hanzi').limit(100);
+  const { data, error } = await supabase.from('vocabulary').select('id, hanzi, pinyin_marked, part_of_speech, meaning_my, meaning_en, hsk_level_id, category:categories(name_my), vocabulary_examples(sentence_zh, sentence_pinyin, translation_my, sort_order)').eq('status', 'published').eq('hsk_level_id', level).order('hanzi').limit(200);
   if (error) throw error;
-  return ((data ?? []) as unknown as VocabularyRow[]).map(mapVocabulary);
+  const published = ((data ?? []) as unknown as VocabularyRow[]).map(mapVocabulary);
+  // Keep the bundled HSK 1 catalog available while a fresh Supabase project is
+  // being seeded. Published rows win on duplicate Hanzi; fallback fills gaps.
+  const fallback = demoVocabulary.filter(item => item.hskLevel === level);
+  if (level !== 1 || published.length >= fallback.length) return published;
+  const publishedHanzi = new Set(published.map(item => item.hanzi));
+  return [...published, ...fallback.filter(item => !publishedHanzi.has(item.hanzi))].sort((a, b) => a.hanzi.localeCompare(b.hanzi));
 }
 
 export async function getPublishedVocabularyDetail(id: string): Promise<VocabularyItem> {
   if (!supabaseConfigured) { const item = demoVocabulary.find(vocabulary => vocabulary.id === id); if (!item) throw new Error('Vocabulary item not found'); return item; }
   const { data, error } = await supabase.from('vocabulary').select('id, hanzi, pinyin_marked, part_of_speech, meaning_my, meaning_en, hsk_level_id, category:categories(name_my), vocabulary_examples(sentence_zh, sentence_pinyin, translation_my, sort_order)').eq('id', id).eq('status', 'published').maybeSingle();
   if (error) throw error;
-  if (!data) throw new Error('Vocabulary item not found');
+  if (!data) {
+    const fallback = demoVocabulary.find(vocabulary => vocabulary.id === id);
+    if (fallback) return fallback;
+    throw new Error('Vocabulary item not found');
+  }
   return mapVocabulary(data as unknown as VocabularyRow);
 }
