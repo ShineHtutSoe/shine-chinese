@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Shine Chinese",
-    "slug": "shine-chinese-mobile",
+    "slug": "shine-chinese",
     "version": "1.0.0",
     "scheme": "shinechinese",
     "orientation": "portrait",
@@ -28,6 +28,13 @@
       "expo-splash-screen",
       "expo-status-bar",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "83cbac78-5de4-4deb-8d6f-34ee698158b4"
+      }
+    },
+    "owner": "shinehtutsoes-team"
   }
 }
