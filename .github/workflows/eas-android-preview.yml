@@ -37,4 +37,4 @@ jobs:
           test -f eas.json
 
       - name: Build Android preview APK with EAS
-        run: npx eas-cli@latest build --platform android --profile preview --non-interactive
+        run: npx --yes eas-cli@latest build --platform android --profile preview --non-interactive
